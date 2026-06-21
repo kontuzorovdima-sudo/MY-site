@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.querySelector('.cta-button');
     const terminal = document.getElementById('retro-terminal');
+    const rebootBtn = document.getElementById('reboot-btn');
     
     // Элементы, которые будем плавно гасить
     const layersToFade = [
         document.querySelector('.ui-wrapper'),
         document.getElementById('matrix-bg'),
         document.getElementById('canvas-container'),
-        document.querySelector('.crt-overlay') // если есть слой с полосками
+        document.querySelector('.crt-overlay')
     ];
 
     if (btn && terminal) {
@@ -17,60 +18,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (el) el.classList.add('fade-out-vibe');
             });
 
-            // 2. С небольшой задержкой проявляем соцсети
-            setTimeout(() => {
-                terminal.classList.add('active');
-            }, 300); // Начинаем проявлять, пока старое еще затухает
-
-            // 3. Полностью отключаем старое через секунду (для оптимизации)
+            // 2. С небольшой задержкой проявляем терминал
             setTimeout(() => {
                 layersToFade.forEach(el => {
                     if (el) el.style.display = 'none';
                 });
-            }, 1100);
+                terminal.style.display = 'flex';
+                terminal.classList.add('active');
+
+                // 3. Запускаем поочерёдное появление соцсетей
+                revealLinks();
+            }, 800);
         };
     }
-});
 
-    const rebootBtn = document.getElementById('reboot-btn');
-    const terminal = document.getElementById('retro-terminal');
-
-    if (rebootBtn && terminal) 
-    {
+    if (rebootBtn && terminal) {
         rebootBtn.onclick = (e) => {
             e.preventDefault();
-
             terminal.classList.add('system-fade-out');
             document.body.style.backgroundColor = 'black';
             setTimeout(() => {
                 window.location.reload();
             }, 1);
-        };
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.querySelector('.cta-button');
-    const terminal = document.getElementById('retro-terminal');
-    const mainContent = [
-        document.querySelector('.ui-wrapper'),
-        document.getElementById('matrix-bg'),
-        document.getElementById('canvas-container')
-    ];
-
-    if (btn) {
-        btn.onclick = () => {
-            // 1. Уводим основной контент в блюр и тьму
-            mainContent.forEach(el => { if(el) el.classList.add('fade-out-vibe'); });
-
-            setTimeout(() => {
-                // 2. Скрываем старое и показываем терминал
-                mainContent.forEach(el => { if(el) el.style.display = 'none'; });
-                terminal.style.display = 'flex';
-                terminal.classList.add('active');
-
-                // 3. ЗАПУСК ПООЧЕРЕДНОГО ПОЯВЛЕНИЯ
-                revealLinks();
-            }, 800);
         };
     }
 });

@@ -38,6 +38,7 @@ setInterval(draw, 70);
 document.addEventListener('DOMContentLoaded', () => {
     const text = "DKVA"; // Текст, который будет напечатан
     const container = document.getElementById('typewriter'); // ID твоего h1
+    if (!container) return; // Если элемента нет (например, на cart.html), выходим
     let index = 0;
 
     function type() {

@@ -17,7 +17,8 @@ function init() {
     renderer.setSize(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio, false);
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
-    document.getElementById('canvas-container').appendChild(renderer.domElement);
+    const container = document.getElementById('canvas-container');
+    if (container) container.appendChild(renderer.domElement);
 
     // 4. Геометрия (абстрактная готическая форма)
     const geometry = new THREE.IcosahedronGeometry(1, 0); // Лоу-поли сфера
@@ -43,11 +44,6 @@ function init() {
 
     animate();
 }
-
-
-
-
-
 function animate() {
     requestAnimationFrame(animate);
 

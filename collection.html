@@ -2,9 +2,198 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>DKVA | COLLECTIONS</title>
-    <link rel="stylesheet" href="cs.css">
+    <title>DKVA | КОЛЛЕКЦИИ</title>
+    <link rel="stylesheet" href="cs.css?v=3">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        .collections {
+            flex-direction: row !important;
+            display: flex !important;
+            gap: 40px !important;
+            padding: 40px 0 !important;
+            justify-content: center !important;
+            align-items: stretch !important;
+        }
+        .item {
+            padding: 60px !important;
+            transform: none !important;
+            margin-bottom: 0 !important;
+            border-width: 2px !important;
+            width: 650px !important;
+            flex: 1 1 0 !important;
+            min-width: 0 !important;
+            max-width: 650px !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .item:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 0 60px darkred !important;
+        }
+        .item img {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 500px !important;
+            margin-bottom: 30px !important;
+            object-fit: contain !important;
+            flex-shrink: 0 !important;
+        }
+        .item-title {
+            font-size: 26px !important;
+            margin-bottom: 20px !important;
+            letter-spacing: 6px !important;
+            color: #ddd !important;
+            flex-shrink: 0 !important;
+        }
+        .item-price {
+            font-size: 20px !important;
+            color: #8b0000 !important;
+            letter-spacing: 3px !important;
+            margin-bottom: 10px !important;
+            flex-shrink: 0 !important;
+        }
+        .item-desc {
+            font-size: 16px !important;
+            line-height: 1.6 !important;
+            margin: 15px 0 !important;
+            color: #999 !important;
+            flex-shrink: 0 !important;
+        }
+        .size-selector {
+            margin-top: auto !important;
+            flex-shrink: 0 !important;
+        }
+        .size-label {
+            font-size: 16px !important;
+        }
+        .size-btn {
+            font-size: 18px !important;
+            padding: 14px 28px !important;
+        }
+        .add-cart-btn {
+            background: transparent !important;
+            border: 1px solid #8b0000 !important;
+            color: #8b0000 !important;
+            font-family: 'Press Start 2P', cursive !important;
+            font-size: 12px !important;
+            padding: 12px 20px !important;
+            margin-top: 15px !important;
+            cursor: pointer !important;
+            transition: 0.3s !important;
+        }
+        .add-cart-btn:hover {
+            background: #8b0000 !important;
+            color: #fff !important;
+            box-shadow: 0 0 20px #8b0000 !important;
+        }
+        .cart-btn {
+            background: transparent !important;
+            border: 1px solid #444 !important;
+            color: #ccc !important;
+            font-family: 'Press Start 2P', cursive !important;
+            font-size: 10px !important;
+            padding: 8px 16px !important;
+            cursor: pointer !important;
+            transition: 0.3s !important;
+        }
+        .cart-btn:hover {
+            border-color: #8b0000 !important;
+            color: #8b0000 !important;
+        }
+        .cart-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0,0,0,0.85) !important;
+            z-index: 10000 !important;
+            display: none !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .cart-overlay.active {
+            display: flex !important;
+        }
+        .cart-window {
+            background: #0a0a0a !important;
+            border: 2px solid #8b0000 !important;
+            padding: 40px !important;
+            width: 500px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            box-shadow: 0 0 50px rgba(139,0,0,0.3) !important;
+        }
+        .cart-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-bottom: 1px solid #8b0000 !important;
+            padding-bottom: 15px !important;
+            margin-bottom: 20px !important;
+        }
+        .cart-title {
+            font-size: 14px !important;
+            color: #8b0000 !important;
+            letter-spacing: 3px !important;
+        }
+        .cart-close {
+            background: none !important;
+            border: 1px solid #444 !important;
+            color: #888 !important;
+            font-family: 'Press Start 2P', cursive !important;
+            font-size: 10px !important;
+            padding: 6px 12px !important;
+            cursor: pointer !important;
+            transition: 0.3s !important;
+        }
+        .cart-close:hover {
+            border-color: #8b0000 !important;
+            color: #8b0000 !important;
+        }
+        .cart-item {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 12px 0 !important;
+            border-bottom: 1px solid #222 !important;
+        }
+        .cart-item-info {
+            font-size: 10px !important;
+            color: #ccc !important;
+        }
+        .cart-item-size {
+            color: #8b0000 !important;
+            font-size: 8px !important;
+        }
+        .cart-remove {
+            background: none !important;
+            border: 1px solid #333 !important;
+            color: #555 !important;
+            font-family: 'Press Start 2P', cursive !important;
+            font-size: 8px !important;
+            padding: 4px 8px !important;
+            cursor: pointer !important;
+            transition: 0.3s !important;
+        }
+        .cart-remove:hover {
+            border-color: #8b0000 !important;
+            color: #8b0000 !important;
+        }
+        .cart-empty {
+            font-size: 10px !important;
+            color: #555 !important;
+            text-align: center !important;
+            padding: 40px !important;
+        }
+        .cart-count {
+            background: #8b0000 !important;
+            color: #fff !important;
+            font-size: 8px !important;
+            padding: 2px 6px !important;
+            margin-left: 5px !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -16,31 +205,64 @@
     <div class="ui-wrapper">
         <header>
             <nav>
-                <a href="index.html" class="nav-link">← BACK</a>
-                <span class="nav-link">COLLECTIONS</span>
+                <a href="index.html" class="nav-link">← НАЗАД</a>
+                <span class="nav-link">КОЛЛЕКЦИИ</span>
+                <a href="cart.html" class="cart-btn">КОРЗИНА</a>
             </nav>
         </header>
 
         <section class="collections">
-            <div class="item">
-                <img src="img\unnamed (1).png" alt="">
-                <span>VOID HOODIE</span>
+
+            <div class="item" data-name="ХУДИ ПУСТОТЫ" data-img="img/dfdfdffdddddddddd.png" data-price="4500">
+                <img src="img/dfdfdffdddddddddd.png" alt="">
+                <span class="item-title">ХУДИ ПУСТОТЫ</span>
+                <span class="item-price">4 500 ₽</span>
+                <p class="item-desc">Тяжёлый хлопковый худи с принтом, вдохновлённым цифровой эрозией.</p>
+                <div class="size-selector">
+                    <span class="size-label">РАЗМЕР:</span>
+                    <button class="size-btn active" data-size="S">S</button>
+                    <button class="size-btn" data-size="M">M</button>
+                    <button class="size-btn" data-size="L">L</button>
+                    <button class="size-btn" data-size="XL">XL</button>
+                </div>
+                <button class="add-cart-btn">+ В КОРЗИНУ</button>
             </div>
 
-            <div class="item">
-                <img src="img\unnamed.png" alt="">
-                <span>BLOOD TEE</span>
+            <div class="item" data-name="КРОВАВАЯ ФУТБОЛКА" data-img="img/safddasdasdas.png" data-price="2500">
+                <img src="img/safddasdasdas.png" alt="">
+                <span class="item-title">КРОВАВАЯ ФУТБОЛКА</span>
+                <span class="item-price">2 500 ₽</span>
+                <p class="item-desc">Оверсайз футболка из органического хлопка. Принт — симуляция сбоя системы.</p>
+                <div class="size-selector">
+                    <span class="size-label">РАЗМЕР:</span>
+                    <button class="size-btn active" data-size="S">S</button>
+                    <button class="size-btn" data-size="M">M</button>
+                    <button class="size-btn" data-size="L">L</button>
+                    <button class="size-btn" data-size="XL">XL</button>
+                </div>
+                <button class="add-cart-btn">+ В КОРЗИНУ</button>
             </div>
 
-            <div class="item">
-                <img src="img\unnamed (2).png" alt="">
-                <span>ARCHIVE JACKET</span>
+            <div class="item" data-name="АРХИВНЫЕ БРЮКИ" data-img="img/dadsadasdsadsasad.png" data-price="5000">
+                <img src="img/dadsadasdsadsasad.png" alt="">
+                <span class="item-title">АРХИВНЫЕ БРЮКИ</span>
+                <span class="item-price">5 000 ₽</span>
+                <p class="item-desc">Свободные брюки из плотной ткани с архивным градиентом. Уникальный узор.</p>
+                <div class="size-selector">
+                    <span class="size-label">РАЗМЕР:</span>
+                    <button class="size-btn active" data-size="S">S</button>
+                    <button class="size-btn" data-size="M">M</button>
+                    <button class="size-btn" data-size="L">L</button>
+                    <button class="size-btn" data-size="XL">XL</button>
+                </div>
+                <button class="add-cart-btn">+ В КОРЗИНУ</button>
             </div>
+
         </section>
 
         <footer>
             <div class="status-bar">
-                <span>COLLECTION: 01</span>
+                <span>КОЛЛЕКЦИЯ: 01</span>
                 <span>©2025 DKVA</span>
             </div>
         </footer>
@@ -48,5 +270,33 @@
 
     <script src="matrix.js"></script>
     <script src="void.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // добавить в корзину
+            document.querySelectorAll('.add-cart-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const item = btn.closest('.item');
+                    const name = item.dataset.name;
+                    const size = item.querySelector('.size-btn.active').dataset.size;
+                    const price = parseInt(item.dataset.price) || 0;
+                    const cart = JSON.parse(localStorage.getItem('dkvaCart') || '[]');
+                    cart.push({ name, size, price });
+                    localStorage.setItem('dkvaCart', JSON.stringify(cart));
+                    btn.textContent = '✓ ДОБАВЛЕНО';
+                    setTimeout(() => { btn.textContent = '+ В КОРЗИНУ'; }, 1000);
+                };
+            });
+
+            // переключение размеров
+            document.querySelectorAll('.size-selector').forEach(selector => {
+                selector.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('size-btn')) {
+                        selector.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

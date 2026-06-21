@@ -5,6 +5,7 @@
     --blood: #8b0000;
     --void: #050505;
     --gray: #444;
+    --white: #ffffff;
 }
 
 body, html {
@@ -148,14 +149,14 @@ nav { display: flex; justify-content: space-between; }
 
 .collections {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 40px;
-    padding: 40px 0;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+    padding: 10px 0;
 }
 
 .item {
     border: 1px solid #333;
-    padding: 20px;
+    padding: 10px;
     text-align: center;
     transition: 0.3s;
     background: rgba(5,5,5,0.6);
@@ -163,20 +164,80 @@ nav { display: flex; justify-content: space-between; }
 
 .item:hover {
     border-color: darkred;
-    box-shadow: 0 0 20px darkred;
-    transform: translateY(-5px);
+    box-shadow: 0 0 8px darkred;
+    transform: translateY(-2px);
 }
 
 .item img {
     width: 100%;
     image-rendering: pixelated;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
-.item span {
+.item-title {
+    display: block;
     font-size: 10px;
     color: #777;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.item-desc {
+    font-size: 8px;
+    line-height: 1.3;
+    color: #555;
+    margin: 4px 0;
+    letter-spacing: 0.5px;
+}
+
+.size-selector {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.size-label {
+    font-size: 8px;
+    color: #555;
+    letter-spacing: 0.5px;
+    margin-right: 2px;
+}
+
+.size-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #555;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    padding: 2px 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Сжимаем всё содержимое карточки через scale */
+.item {
+    transform: scale(0.75);
+    transform-origin: top center;
+    margin-bottom: -30px;
+}
+
+.item:hover {
+    transform: scale(0.75) translateY(-2px);
+    transform-origin: top center;
+}
+
+.size-btn:hover {
+    border-color: var(--blood);
+    color: var(--blood);
+}
+
+.size-btn.active {
+    border-color: var(--blood);
+    color: var(--blood);
+    box-shadow: 0 0 8px rgba(139, 0, 0, 0.4);
 }
 
 #video-overlay {
@@ -938,4 +999,3 @@ nav { display: flex; justify-content: space-between; }
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
-

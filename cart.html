@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>DKVA | КОРЗИНА</title>
+    <link rel="stylesheet" href="cs.css?v=3">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { overflow: hidden !important; }
+        .cart-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 20;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .cart-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .cart-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px 0;
+        }
+        .cart-window {
+            background: rgba(5,5,5,0.6);
+            border: 2px solid var(--blood, #8b0000);
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 0 50px rgba(139,0,0,0.15);
+            backdrop-filter: blur(8px);
+        }
+        .cart-title-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(139,0,0,0.4);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .cart-title-txt { font-size: 14px; color: var(--blood, #8b0000); letter-spacing: 4px; }
+        .cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(34,34,34,0.6);
+        }
+        .cart-item-name { font-size: 11px; color: #ccc; letter-spacing: 2px; }
+        .cart-item-size { font-size: 8px; color: var(--blood, #8b0000); margin-top: 4px; }
+        .cart-rm-btn {
+            background: none; border: 1px solid #333; color: #555;
+            font-family: 'Press Start 2P', cursive; font-size: 8px; padding: 6px 12px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .cart-rm-btn:hover { border-color: var(--blood, #8b0000); color: var(--blood, #8b0000); }
+        .cart-empty-msg { font-size: 10px; color: #555; text-align: center; padding: 60px 0; }
+        .cart-footer {
+            border-top: 1px solid rgba(139,0,0,0.3);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-clear-btn {
+            background: none; border: 1px solid #333; color: #555;
+            font-family: 'Press Start 2P', cursive; font-size: 7px; padding: 6px 12px;
+            cursor: pointer; transition: 0.3s;
+        }
+        .cart-clear-btn:hover { border-color: var(--blood, #8b0000); color: var(--blood, #8b0000); }
+        .cart-total { font-size: 10px; color: var(--gray, #444); }
+        .cart-total span { color: var(--blood, #8b0000); }
+        .cart-count-badge { font-size: 10px; color: var(--blood, #8b0000); }
+        .checkout-btn {
+            background: transparent; border: 1px solid var(--blood, #8b0000);
+            color: var(--blood, #8b0000); font-family: 'Press Start 2P', cursive;
+            font-size: 10px; padding: 12px 24px; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 15px;
+        }
+        .checkout-btn:hover {
+            background: var(--blood, #8b0000); color: #fff; box-shadow: 0 0 20px rgba(139,0,0,0.5);
+        }
+        .order-form { display: none; }
+        .order-form.active { display: block; }
+        .cart-items-view { display: block; }
+        .cart-items-view.hidden { display: none; }
+        .form-group { margin-bottom: 15px; }
+        .form-label {
+            display: block; font-size: 8px; color: #888; letter-spacing: 2px; margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%; padding: 10px; background: rgba(0,0,0,0.5);
+            border: 1px solid #333; color: #ccc; font-family: 'Courier New', monospace;
+            font-size: 12px; box-sizing: border-box; transition: 0.3s;
+        }
+        .form-input:focus {
+            outline: none; border-color: var(--blood, #8b0000); box-shadow: 0 0 10px rgba(139,0,0,0.2);
+        }
+        .form-select {
+            width: 100%; padding: 10px; background: rgba(0,0,0,0.5);
+            border: 1px solid #333; color: #ccc; font-family: 'Courier New', monospace;
+            font-size: 12px; box-sizing: border-box; transition: 0.3s; cursor: pointer;
+        }
+        .form-select:focus { outline: none; border-color: var(--blood, #8b0000); }
+        .form-select option { background: #0a0a0a; color: #ccc; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        .submit-order-btn {
+            background: transparent; border: 1px solid var(--blood, #8b0000);
+            color: var(--blood, #8b0000); font-family: 'Press Start 2P', cursive;
+            font-size: 10px; padding: 14px 28px; cursor: pointer; transition: 0.3s; width: 100%; margin-top: 10px;
+        }
+        .submit-order-btn:hover {
+            background: var(--blood, #8b0000); color: #fff; box-shadow: 0 0 20px rgba(139,0,0,0.5);
+        }
+        .back-to-cart-btn {
+            background: none; border: 1px solid #333; color: #555;
+            font-family: 'Press Start 2P', cursive; font-size: 7px; padding: 6px 12px;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .back-to-cart-btn:hover { border-color: var(--blood, #8b0000); color: var(--blood, #8b0000); }
+        .success-msg { text-align: center; padding: 40px 0; }
+        .success-msg .icon { font-size: 30px; color: var(--blood, #8b0000); margin-bottom: 15px; }
+        .success-msg .text { font-size: 10px; color: #aaa; line-height: 1.8; }
+        /* гео и ПВЗ */
+        .geo-status {
+            font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 10px;
+        }
+        .geo-status span { color: var(--blood, #8b0000); }
+        .geo-btn {
+            background: transparent; border: 1px solid #444; color: #888;
+            font-family: 'Press Start 2P', cursive; font-size: 7px; padding: 8px 14px;
+            cursor: pointer; transition: 0.3s; margin-bottom: 15px;
+        }
+        .geo-btn:hover { border-color: var(--blood, #8b0000); color: var(--blood, #8b0000); }
+        .pvz-list {
+            max-height: 200px; overflow-y: auto; margin-bottom: 10px;
+        }
+        .pvz-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 12px; border: 1px solid transparent;
+            cursor: pointer; transition: 0.3s; font-size: 7px; color: #888; letter-spacing: 1px;
+        }
+        .pvz-item:hover, .pvz-item.selected {
+            border-color: var(--blood, #8b0000); color: #ccc;
+            background: rgba(139,0,0,0.1);
+        }
+        .pvz-item .pvz-name { font-size: 8px; color: #aaa; }
+        .pvz-item .pvz-addr { font-size: 6px; color: #555; }
+        .pvz-label { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 5px; }
+        .coords-display { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 10px; }
+        .coords-display span { color: var(--blood, #8b0000); }
+        .loading-dots::after {
+            content: ''; animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-bg"></canvas>
+    <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+
+    <div class="cart-page">
+        <header>
+            <nav class="cart-nav">
+                <a href="collection.html" class="nav-link">← НАЗАД</a>
+                <span class="nav-link">КОРЗИНА</span>
+                <span class="cart-count-badge" id="cartCountBadge">0</span>
+            </nav>
+        </header>
+
+        <div class="cart-content">
+            <div class="cart-window">
+                <div class="cart-title-line">
+                    <span class="cart-title-txt" id="formTitle">ВАША КОРЗИНА</span>
+                    <span class="cart-count-badge" id="cartHeaderCount">0</span>
+                </div>
+
+                <!-- Список корзины -->
+                <div class="cart-items-view" id="cartItemsView">
+                    <div id="cartItemsList"><div class="cart-empty-msg">КОРЗИНА ПУСТА</div></div>
+                    <div class="cart-footer">
+                        <button class="cart-clear-btn" id="clearCartBtn">ОЧИСТИТЬ</button>
+                        <span class="cart-total">ВСЕГО: <span id="cartTotalItems">0</span></span>
+                    </div>
+                    <button class="checkout-btn" id="checkoutBtn">ОФОРМИТЬ ЗАКАЗ</button>
+                </div>
+
+                <!-- Форма -->
+                <div class="order-form" id="orderForm">
+                    <div class="form-group">
+                        <label class="form-label">ФАМИЛИЯ ИМЯ ОТЧЕСТВО</label>
+                        <input class="form-input" id="inputFio" type="text" placeholder="ИВАНОВ ИВАН ИВАНОВИЧ">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">НОМЕР ТЕЛЕФОНА</label>
+                            <input class="form-input" id="inputPhone" type="tel" placeholder="+7 (999) 123-45-67">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">E-MAIL</label>
+                            <input class="form-input" id="inputEmail" type="email" placeholder="EMAIL@MAIL.RU">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">СЛУЖБА ДОСТАВКИ</label>
+                        <select class="form-select" id="inputDelivery">
+                            <option value="ПОЧТА РОССИИ">ПОЧТА РОССИИ</option>
+                            <option value="СДЭК">СДЭК</option>
+                            <option value="BOXBERY">BOXBERY</option>
+                            <option value="DPD">DPD</option>
+                            <option value="ЯНДЕКС ДОСТАВКА">ЯНДЕКС ДОСТАВКА</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">АДРЕС ДОСТАВКИ / ПУНКТ ВЫДАЧИ</label>
+                        <input class="form-input" id="inputAddress" type="text" placeholder="НАЖМИТЕ «МОЁ МЕСТОПОЛОЖЕНИЕ»">
+                    </div>
+
+                    <div class="geo-status" id="geoStatus">ГЕОЛОКАЦИЯ: <span>НЕ АКТИВНА</span></div>
+                    <button class="geo-btn" id="geoBtn">МОЁ МЕСТОПОЛОЖЕНИЕ</button>
+
+                    <div class="pvz-label">ПУНКТЫ ВЫДАЧИ РЯДОМ:</div>
+                    <div class="pvz-list" id="pvzList"><div style="font-size:7px;color:#555;padding:10px;text-align:center;">НАЖМИТЕ «МОЁ МЕСТОПОЛОЖЕНИЕ»</div></div>
+                    <div class="coords-display">КООРДИНАТЫ: <span id="coordsDisplay">—</span></div>
+
+                    <button class="submit-order-btn" id="submitOrderBtn">ПОДТВЕРДИТЬ ЗАКАЗ</button>
+                    <button class="back-to-cart-btn" id="backToCartBtn">← НАЗАД В КОРЗИНУ</button>
+                </div>
+
+                <!-- Успех -->
+                <div class="order-form" id="successView">
+                    <div class="success-msg">
+                        <div class="icon">✓</div>
+                        <div class="text">
+                            ЗАКАЗ ОФОРМЛЕН<br><br>
+                            МЫ СВЯЖЕМСЯ С ВАМИ В БЛИЖАЙШЕЕ ВРЕМЯ<br>
+                            ДЛЯ ПОДТВЕРЖДЕНИЯ ДЕТАЛЕЙ
+                        </div>
+                    </div>
+                    <a href="collection.html" class="checkout-btn" style="display:block;text-align:center;text-decoration:none;">ПРОДОЛЖИТЬ ПОКУПКИ</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="status-bar">
+                <span>КОРЗИНА</span>
+                <span>©2025 DKVA</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="matrix.js"></script>
+    <script src="void.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const list = document.getElementById('cartItemsList');
+            const headerCount = document.getElementById('cartHeaderCount');
+            const badge = document.getElementById('cartCountBadge');
+            const totalSpan = document.getElementById('cartTotalItems');
+            const clearBtn = document.getElementById('clearCartBtn');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const cartView = document.getElementById('cartItemsView');
+            const orderForm = document.getElementById('orderForm');
+            const successView = document.getElementById('successView');
+            const backBtn = document.getElementById('backToCartBtn');
+            const formTitle = document.getElementById('formTitle');
+            const submitBtn = document.getElementById('submitOrderBtn');
+            const addressInput = document.getElementById('inputAddress');
+            const coordsDisplay = document.getElementById('coordsDisplay');
+            const pvzList = document.getElementById('pvzList');
+            const geoBtn = document.getElementById('geoBtn');
+            const geoStatus = document.getElementById('geoStatus');
+
+            let cart = [];
+            let currentCoords = null;
+            let selectedPvz = null;
+
+            // запрос геолокации
+            geoBtn.onclick = () => {
+                if (!navigator.geolocation) {
+                    geoStatus.innerHTML = 'ГЕОЛОКАЦИЯ: <span style="color:#8b0000;">НЕ ПОДДЕРЖИВАЕТСЯ БРАУЗЕРОМ</span>';
+                    return;
+                }
+                geoStatus.innerHTML = 'ГЕОЛОКАЦИЯ: <span style="color:#8b0000;">ОПРЕДЕЛЕНИЕ...</span>';
+                geoBtn.disabled = true;
+                geoBtn.textContent = 'ОПРЕДЕЛЕНИЕ...';
+
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        currentCoords = { lat: parseFloat(lat.toFixed(6)), lng: parseFloat(lng.toFixed(6)) };
+                        coordsDisplay.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                        geoStatus.innerHTML = `ГЕОЛОКАЦИЯ: <span style="color:#8b0000;">${lat.toFixed(4)}, ${lng.toFixed(4)}</span>`;
+                        geoBtn.textContent = 'ОБНОВИТЬ МЕСТОПОЛОЖЕНИЕ';
+                        geoBtn.disabled = false;
+
+                        // обратное геокодирование
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ru`)
+                            .then(r => r.json())
+                            .then(data => {
+                                if (data && data.display_name) {
+                                    addressInput.value = data.display_name;
+                                }
+                            })
+                            .catch(() => {});
+
+                        // поиск ПВЗ
+                        searchPvz(lat, lng);
+                    },
+                    (err) => {
+                        let msg = 'ОТКАЗ В ДОСТУПЕ';
+                        if (err.code === 1) msg = 'ОТКАЗ В ДОСТУПЕ';
+                        else if (err.code === 2) msg = 'НЕДОСТУПНО';
+                        else if (err.code === 3) msg = 'ТАЙМ-АУТ';
+                        geoStatus.innerHTML = `ГЕОЛОКАЦИЯ: <span style="color:#8b0000;">${msg}</span>`;
+                        geoBtn.textContent = 'МОЁ МЕСТОПОЛОЖЕНИЕ';
+                        geoBtn.disabled = false;
+                        // покажем Москву по умолчанию
+                        searchPvz(55.751244, 37.618423);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            };
+
+            function searchPvz(lat, lng) {
+                pvzList.innerHTML = '<div style="font-size:7px;color:#555;padding:10px;text-align:center;">ПОИСК ПВЗ...</div>';
+
+                const overpassUrl = 'https://overpass-api.de/api/interpreter';
+                const query = `
+                    [out:json];
+                    (
+                        node["amenity"="post_office"](around:3000,${lat},${lng});
+                        node["amenity"="parcel_locker"](around:3000,${lat},${lng});
+                        node["amenity"="post_depot"](around:3000,${lat},${lng});
+                    );
+                    out body;
+                `;
+
+                fetch(overpassUrl, {
+                    method: 'POST',
+                    body: new URLSearchParams({ data: query })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    const nodes = data.elements || [];
+                    if (nodes.length === 0) {
+                        pvzList.innerHTML = '<div style="font-size:7px;color:#555;padding:10px;text-align:center;">ПВЗ НЕ НАЙДЕНЫ. ПОПРОБУЙТЕ ДРУГОЙ РАЙОН</div>';
+                        return;
+                    }
+
+                    // берём первые 10
+                    const shown = nodes.slice(0, 10);
+                    let html = '';
+                    shown.forEach((node) => {
+                        const name = node.tags?.name || node.tags?.operator || 'ПВЗ';
+                        const addr = node.tags?.['addr:full'] ||
+                                    [node.tags?.['addr:street'], node.tags?.['addr:housenumber']].filter(Boolean).join(', ') ||
+                                    `${node.lat.toFixed(4)}, ${node.lon.toFixed(4)}`;
+                        const nlat = node.lat;
+                        const nlng = node.lon;
+
+                        html += `<div class="pvz-item" data-lat="${nlat}" data-lng="${nlng}" data-name="${name}" data-addr="${addr}">
+                            <div>
+                                <div class="pvz-name">${name}</div>
+                                <div class="pvz-addr">${addr}</div>
+                            </div>
+                            <span style="color:#8b0000;font-size:8px;flex-shrink:0;">ВЫБРАТЬ</span>
+                        </div>`;
+                    });
+
+                    if (shown.length < nodes.length) {
+                        html += `<div style="font-size:6px;color:#444;padding:8px;text-align:center;">ПОКАЗАНЫ ПЕРВЫЕ 10 ИЗ ${nodes.length}</div>`;
+                    }
+
+                    pvzList.innerHTML = html;
+
+                    pvzList.querySelectorAll('.pvz-item').forEach(el => {
+                        el.onclick = () => {
+                            pvzList.querySelectorAll('.pvz-item').forEach(e => e.classList.remove('selected'));
+                            el.classList.add('selected');
+                            const name = el.dataset.name;
+                            const addr = el.dataset.addr;
+                            selectedPvz = {
+                                name: name,
+                                addr: addr,
+                                coords: { lat: parseFloat(el.dataset.lat), lng: parseFloat(el.dataset.lng) }
+                            };
+                            addressInput.value = `${name}, ${addr}`;
+                            coordsDisplay.textContent = `${el.dataset.lat}, ${el.dataset.lng}`;
+                        };
+                    });
+                })
+                .catch(() => {
+                    pvzList.innerHTML = '<div style="font-size:7px;color:#555;padding:10px;text-align:center;">ОШИБКА ЗАГРУЗКИ ПВЗ</div>';
+                });
+            }
+
+            function render() {
+                cart = JSON.parse(localStorage.getItem('dkvaCart') || '[]');
+                const count = cart.length;
+                headerCount.textContent = count;
+                badge.textContent = count;
+                totalSpan.textContent = count;
+
+                if (count === 0) {
+                    list.innerHTML = '<div class="cart-empty-msg">КОРЗИНА ПУСТА</div>';
+                } else {
+                    list.innerHTML = cart.map((item, i) => `
+                        <div class="cart-item-row">
+                            <div>
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-size">РАЗМЕР: ${item.size}</div>
+                            </div>
+                            <button class="cart-rm-btn" data-index="${i}">УДАЛИТЬ</button>
+                        </div>
+                    `).join('');
+                    list.querySelectorAll('.cart-rm-btn').forEach(btn => {
+                        btn.onclick = () => {
+                            cart.splice(parseInt(btn.dataset.index), 1);
+                            localStorage.setItem('dkvaCart', JSON.stringify(cart));
+                            render();
+                        };
+                    });
+                }
+            }
+
+            function showCart() {
+                cartView.classList.remove('hidden');
+                orderForm.classList.remove('active');
+                successView.classList.remove('active');
+                formTitle.textContent = 'ВАША КОРЗИНА';
+                render();
+            }
+
+            clearBtn.onclick = () => {
+                if (cart.length === 0) return;
+                localStorage.setItem('dkvaCart', '[]');
+                render();
+            };
+
+            checkoutBtn.onclick = () => {
+                if (cart.length === 0) return;
+                cartView.classList.add('hidden');
+                orderForm.classList.add('active');
+                successView.classList.remove('active');
+                formTitle.textContent = 'ОФОРМЛЕНИЕ';
+            };
+
+            backBtn.onclick = showCart;
+
+            submitBtn.onclick = () => {
+                const fio = document.getElementById('inputFio').value.trim();
+                const phone = document.getElementById('inputPhone').value.trim();
+                const email = document.getElementById('inputEmail').value.trim();
+                const delivery = document.getElementById('inputDelivery').value;
+                const address = addressInput.value.trim();
+
+                if (!fio || !phone || !email || !address) {
+                    alert('ЗАПОЛНИТЕ ВСЕ ПОЛЯ И ВЫБЕРИТЕ ПУНКТ ВЫДАЧИ');
+                    return;
+                }
+
+                const order = {
+                    fio, phone, email, delivery, address,
+                    coords: currentCoords,
+                    pvz: selectedPvz,
+                    items: cart,
+                    date: new Date().toISOString()
+                };
+                const orders = JSON.parse(localStorage.getItem('dkvaOrders') || '[]');
+                orders.push(order);
+                localStorage.setItem('dkvaOrders', JSON.stringify(orders));
+                localStorage.setItem('dkvaCart', '[]');
+
+                orderForm.classList.remove('active');
+                successView.classList.add('active');
+                formTitle.textContent = 'ЗАКАЗ ПРИНЯТ';
+            };
+
+            render();
+        });
+    </script>
+</body>
+</html>

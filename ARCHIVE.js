@@ -23,33 +23,33 @@ function decryptText(element) {
 const brandHistory = [
     { 
         date: "2021.11.08", 
-        title: "INCIDENT_00: THE_FIRST_BIT", 
+        title: "ИНЦИДЕНТ_00: ПЕРВЫЙ_БИТ", 
         text: "В закрытом сегменте сети зафиксирован первый сигнал DKVA. Это не был проект. Это была ошибка в коде рендеринга, которая начала самовоспроизводиться. Мы поняли: хаос обладает собственной эстетикой, более честной, чем идеальные интерфейсы." 
     },
     { 
         date: "2022.05.20", 
-        title: "INCIDENT_01: ARCHITECTURAL_REJECTION", 
-        text: "Попытка встроить DKVA в стандартные дизайн-системы провалилась. Сетки ломались, цвета инвертировались. Вместо того чтобы исправлять баги, мы сделали их фундаментом. Так родилась концепция 'Brutal Digitalism'." 
+        title: "ИНЦИДЕНТ_01: АРХИТЕКТУРНОЕ_ОТТОРЖЕНИЕ", 
+        text: "Попытка встроить DKVA в стандартные дизайн-системы провалилась. Сетки ломались, цвета инвертировались. Вместо того чтобы исправлять баги, мы сделали их фундаментом. Так родилась концепция 'Брутального цифровизма'." 
     },
     { 
         date: "2023.01.12", 
-        title: "INCIDENT_02: SIGNAL_DISTORTION", 
+        title: "ИНЦИДЕНТ_02: ИСКАЖЕНИЕ_СИГНАЛА", 
         text: "Запуск первых визуальных манифестов. Публика назвала это глитч-артом, мы назвали это 'цифровой эрозией'. Мы начали разрушать изображения, чтобы увидеть, что находится за ними. Оказалось — там только шум." 
     },
     { 
         date: "2024.09.30", 
-        title: "INCIDENT_03: HUMAN_INTERFACE_GUIDELINES", 
+        title: "ИНЦИДЕНТ_03: ПРАВИЛА_ЧЕЛОВЕЧЕСКОГО_ИНТЕРФЕЙСА", 
         text: "DKVA выходит за пределы мониторов. Одежда, физические артефакты, зашифрованные послания в офлайне. Мы учим материю глючить так же красиво, как это делает софт. Граница между кодом и плотью истончается." 
     },
     { 
         date: "2025.12.26", 
-        title: "INCIDENT_04: TOTAL_SYNCHRONIZATION", 
+        title: "ИНЦИДЕНТ_04: ПОЛНАЯ_СИНХРОНИЗАЦИЯ", 
         text: "Вы здесь. ARCHIVE_01 — это не склад файлов, это зеркало. Система DKVA полностью интегрирована в ваше восприятие. Теперь каждый сбой в вашей ленте — это наше присутствие. Мы — это шум в вашей голове." 
     },
     
     { 
     date: "2025.12.26", 
-    title: "FINAL_LOG: USER_DETECTION", 
+    title: "ФИНАЛЬНЫЙ_ЛОГ: ОБНАРУЖЕНИЕ_ПОЛЬЗОВАТЕЛЯ", 
     text: "Обнаружено внешнее подключение. Сессия мониторится. Локация и IP-адрес синхронизированы с архивом. Поздравляем, вы стали частью DKVA. Выхода нет." 
     }
 ];
@@ -122,10 +122,7 @@ document.addEventListener('mousemove', (e) => {
         0 0 15px rgba(139, 0, 0, 0.2)
     `;
 
-    
-});
-
-// Находим заголовок или контент внутри
+    // Находим заголовок или контент внутри
     const content = archive.querySelector('.archive-history');
     if (content) {
         // Смещаем контент внутри окна в противоположную сторону
@@ -133,6 +130,7 @@ document.addEventListener('mousemove', (e) => {
         const moveY = mouseY * 10;
         content.style.transform = `translateZ(20px) translateX(${-moveX}px) translateY(${-moveY}px)`;
     }
+});
 
     function bootArchiveSequence() {
     const container = document.getElementById('history-container');
@@ -141,7 +139,7 @@ document.addEventListener('mousemove', (e) => {
     // Сначала выводим техническую плашку
     const bootLog = document.createElement('div');
     bootLog.className = 'boot-log';
-    bootLog.innerHTML = `> EXTRACTING_ARCHIVE_DATA... <br> > BYPASSING_ENCRYPTION... DONE.`;
+    bootLog.innerHTML = `> ИЗВЛЕЧЕНИЕ_ДАННЫХ_АРХИВА... <br> > ОБХОД_ШИФРОВАНИЯ... ГОТОВО.`;
     container.appendChild(bootLog);
 
     // Запускаем основную историю через 1 секунду
@@ -171,10 +169,18 @@ function renderHistory() {
 
             // 2. Сразу вешаем эффект "Глубокого сканирования" на текст
             const textEl = div.querySelector('.history-text');
-            setupSecretHover(textEl);
+            if (textEl) {
+                textEl.addEventListener('mouseenter', () => {
+                    textEl.style.textShadow = '0 0 8px rgba(139,0,0,0.6)';
+                });
+                textEl.addEventListener('mouseleave', () => {
+                    textEl.style.textShadow = 'none';
+                });
+            }
 
         }, index * 800);
     });
 }
+
 
 
