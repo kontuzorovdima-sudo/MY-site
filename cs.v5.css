@@ -1587,12 +1587,40 @@ nav { display: flex; justify-content: space-between; }
 }
 
 .auth-box {
-    background: rgba(5, 5, 5, 0.8);
-    border: 2px solid var(--blood);
+    position: relative;
+    background: linear-gradient(135deg, rgba(20, 0, 0, 0.9) 0%, rgba(5, 5, 5, 0.95) 100%);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-radius: 4px;
     padding: 30px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 0 30px rgba(139, 0, 0, 0.3);
+    width: 400px;
+    box-shadow: 
+        0 0 50px rgba(139, 0, 0, 0.1),
+        inset 0 0 20px rgba(139, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+/* Декоративные уголки как в терминале */
+.auth-box::before,
+.auth-box::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--blood);
+}
+
+.auth-box::before {
+    top: -5px;
+    left: -5px;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.auth-box::after {
+    bottom: -5px;
+    right: -5px;
+    border-left: 0;
+    border-top: 0;
 }
 
 .auth-title {
