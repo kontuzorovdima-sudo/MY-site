@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const terminal = document.getElementById('retro-terminal');
     const rebootBtn = document.getElementById('reboot-btn');
     
-    // Элементы, которые будем плавно гасить
     const layersToFade = [
         document.querySelector('.ui-wrapper'),
         document.getElementById('matrix-bg'),
@@ -13,20 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btn && terminal) {
         btn.onclick = () => {
-            // 1. Плавно гасим основной контент
             layersToFade.forEach(el => {
                 if (el) el.classList.add('fade-out-vibe');
             });
 
-            // 2. С небольшой задержкой проявляем терминал
             setTimeout(() => {
                 layersToFade.forEach(el => {
                     if (el) el.style.display = 'none';
                 });
                 terminal.style.display = 'flex';
                 terminal.classList.add('active');
-
-                // 3. Запускаем поочерёдное появление соцсетей
                 revealLinks();
             }, 800);
         };
@@ -46,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function revealLinks() {
     const links = document.querySelectorAll('.social-item');
-    
     links.forEach((link, index) => {
         setTimeout(() => {
             link.classList.add('revealed');    
@@ -54,41 +48,7 @@ function revealLinks() {
     });
 }
 
-document.addEventListener('mousemove', (e) => {
-    const terminal = document.querySelector('.terminal-box');
-    if (terminal && terminal.parentElement.style.display === 'flex') {
-        const x = (window.innerWidth / 2 - e.clientX) / 30;
-        const y = (window.innerHeight / 2 - e.clientY) / 30;
-        terminal.style.transform = `rotateX(${y}deg) rotateY(${-x}deg)`;
-    }
-});
-
-function updateSystemTime() {
-    const timeElement = document.getElementById('system-time');
-    const dateElement = document.getElementById('system-date');
-    
-    if (!timeElement || !dateElement) return;
-
-    const now = new Date();
-    
-    // Форматируем время
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-    // Форматируем дату
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const year = now.getFullYear();
-
-    timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-    dateElement.textContent = `${day}.${month}.${year}`;
-}
-
-// Запускаем обновление каждую секунду
-setInterval(updateSystemTime, 1000);
-updateSystemTime(); // Инициализация сразу
-
+// ========== КУРСОР-ПРИЗРАК (ПК + ТЕЛЕФОН) ==========
 
 const ghost = document.createElement('div');
 ghost.className = 'cursor-ghost';
@@ -97,13 +57,51 @@ document.body.appendChild(ghost);
 
 const coordsText = ghost.querySelector('.ghost-coords');
 
+// ПК — мышь
 document.addEventListener('mousemove', (e) => {
-    // Задержка в 150мс создает эффект "вязкого" сигнала
-    setTimeout(() => {
-        ghost.style.left = `${e.clientX + 15}px`;
-        ghost.style.top = `${e.clientY + 15}px`;
-        coordsText.innerText = `${e.clientX},${e.clientY}`;
-    }, 1);
+    ghost.style.left = `${e.clientX + 15}px`;
+    ghost.style.top = `${e.clientY + 15}px`;
+    coordsText.innerText = `${e.clientX},${e.clientY}`;
 });
 
+// Телефон — касание
+document.addEventListener('touchmove', (e) => {
+    const touch = e.touches[0];
+    ghost.style.left = `${touch.clientX + 15}px`;
+    ghost.style.top = `${touch.clientY + 15}px`;
+    coordsText.innerText = `${Math.round(touch.clientX)},${Math.round(touch.clientY)}`;
+}, { passive: true });
 
+document.addEventListener('touchstart', () => {
+    ghost.style.opacity = '1';
+}, { passive: true });
+
+document.addEventListener('touchend', () => {
+    ghost.style.opacity = '0';
+}, { passive: true });
+
+// На ПК ghost виден всегда
+ghost.style.opacity = '1';
+
+// ========== ЧАСЫ ==========
+
+function updateSystemTime() {
+    const timeElement = document.getElementById('system-time');
+    const dateElement = document.getElementById('system-date');
+    
+    if (!timeElement || !dateElement) return;
+
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+
+    timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+    dateElement.textContent = `${day}.${month}.${year}`;
+}
+
+setInterval(updateSystemTime, 1000);
+updateSystemTime();
