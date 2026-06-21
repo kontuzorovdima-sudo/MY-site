@@ -9,7 +9,7 @@ function init() {
     camera.position.z = 3;
 
     renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio); // Добавлено для мобильных
+    renderer.setPixelRatio(window.devicePixelRatio);
     const pixelRatio = 0.25;
     renderer.setSize(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio, false);
     renderer.domElement.style.width = '100%';
@@ -19,28 +19,27 @@ function init() {
 
     const geometry = new THREE.IcosahedronGeometry(1, 0);
     
-    // ИСПРАВЛЕНИЕ: Используем MeshBasicMaterial вместо MeshPhongMaterial
-    // BasicMaterial не зависит от освещения и будет работать везде
+    // ГЛАВНОЕ ИЗМЕНЕНИЕ: MeshBasicMaterial вместо MeshPhongMaterial
     const material = new THREE.MeshBasicMaterial({ 
-        color: 0xff0000, // Ярко-красный вместо тёмно-красного
+        color: 0xff0000,
         wireframe: true
     });
     
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    // Свет всё ещё можно оставить для других объектов, если они появятся
+    // Свет можно удалить, но оставим для совместимости
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(1, 1, 2);
     scene.add(light);
-    scene.add(new THREE.AmbientLight(0x404040)); // Увеличил яркость ambient света
+    scene.add(new THREE.AmbientLight(0x404040));
 
     document.addEventListener('mousemove', (e) => {
         mouseX = (e.clientX / window.innerWidth) - 0.5;
         mouseY = (e.clientY / window.innerHeight) - 0.5;
     });
 
-    // Добавил поддержку touch для мобильных
+    // Поддержка touch для мобильных
     document.addEventListener('touchmove', (e) => {
         if (e.touches.length > 0) {
             mouseX = (e.touches[0].clientX / window.innerWidth) - 0.5;
