@@ -874,16 +874,15 @@ nav { display: flex; justify-content: space-between; }
 }
 
 .archive-container {
-    perspective: 1200px; /* Глубина 3D-пространства */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .archive-main {
-    transition: transform 0.1s ease-out; /* Чтобы окно не дергалось, а плавно следовало */
-    transform-style: preserve-3d;
+    transition: none;
+    transform: none;
 }
 
 .history-item {
