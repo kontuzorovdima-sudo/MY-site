@@ -1138,9 +1138,10 @@ nav { display: flex; justify-content: space-between; }
     }
 
     .item img {
-        max-height: 40vmin !important;
+        max-height: 50vmin !important;
         max-width: 100% !important;
         height: auto !important;
+        object-fit: contain !important;
     }
 
     .item-title {
