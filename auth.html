@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>DKVA | АВТОРИЗАЦИЯ</title>
+    <link rel="stylesheet" href="cs.v5.css">
+</head>
+<body>
+
+    <canvas id="matrix-bg"></canvas>
+    <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+
+    <div class="ui-wrapper">
+        <header>
+            <nav>
+                <a href="index.html" class="nav-link">← НАЗАД</a>
+            </nav>
+        </header>
+
+        <main class="auth-container">
+            <div class="auth-box">
+                <h2 class="auth-title">ДОСТУП К СИСТЕМЕ</h2>
+
+                <!-- Форма входа -->
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label">ЛОГИН</label>
+                        <input class="form-input" id="loginUsername" type="text" placeholder="ВВЕДИТЕ ЛОГИН" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ПАРОЛЬ</label>
+                        <input class="form-input" id="loginPassword" type="password" placeholder="ВВЕДИТЕ ПАРОЛЬ" autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="auth-btn">ВОЙТИ</button>
+                    <p class="auth-switch">НЕТ АККАУНТА? <a href="#" id="showRegister">ЗАРЕГИСТРИРОВАТЬСЯ</a></p>
+                </form>
+
+                <!-- Форма регистрации -->
+                <form id="registerForm" class="auth-form hidden">
+                    <div class="form-group">
+                        <label class="form-label">ЛОГИН</label>
+                        <input class="form-input" id="regUsername" type="text" placeholder="ВЫБЕРИТЕ ЛОГИН" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ПАРОЛЬ</label>
+                        <input class="form-input" id="regPassword" type="password" placeholder="ВЫБЕРИТЕ ПАРОЛЬ" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ПОДТВЕРДИТЕ ПАРОЛЬ</label>
+                        <input class="form-input" id="regPasswordConfirm" type="password" placeholder="ПОВТОРИТЕ ПАРОЛЬ" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="auth-btn">СОЗДАТЬ АККАУНТ</button>
+                    <p class="auth-switch">УЖЕ ЕСТЬ АККАУНТ? <a href="#" id="showLogin">ВОЙТИ</a></p>
+                </form>
+
+                <div id="authMessage" class="auth-message"></div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="status-bar">
+                <span>СИСТЕМА АВТОРИЗАЦИИ</span>
+                <span>©2025 DKVA</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="matrix.js"></script>
+    <script src="void.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const showRegister = document.getElementById('showRegister');
+            const showLogin = document.getElementById('showLogin');
+            const authMessage = document.getElementById('authMessage');
+
+            // Проверяем, авторизован ли пользователь
+            const currentUser = localStorage.getItem('dkvaCurrentUser');
+            if (currentUser) {
+                showMessage(`ВЫ УЖЕ ВОШЛИ КАК: ${currentUser.toUpperCase()}`, 'success');
+            }
+
+            // Переключение на регистрацию
+            showRegister.onclick = (e) => {
+                e.preventDefault();
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                authMessage.textContent = '';
+            };
+
+            // Переключение на вход
+            showLogin.onclick = (e) => {
+                e.preventDefault();
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                authMessage.textContent = '';
+            };
+
+            // Регистрация
+            registerForm.onsubmit = (e) => {
+                e.preventDefault();
+                const username = document.getElementById('regUsername').value.trim();
+                const password = document.getElementById('regPassword').value;
+                const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+
+                if (!username || !password || !passwordConfirm) {
+                    showMessage('ЗАПОЛНИТЕ ВСЕ ПОЛЯ', 'error');
+                    return;
+                }
+
+                if (password !== passwordConfirm) {
+                    showMessage('ПАРОЛИ НЕ СОВПАДАЮТ', 'error');
+                    return;
+                }
+
+                if (password.length < 4) {
+                    showMessage('ПАРОЛЬ ДОЛЖЕН БЫТЬ ОТ 4 СИМВОЛОВ', 'error');
+                    return;
+                }
+
+                // Получаем существующих пользователей
+                const users = JSON.parse(localStorage.getItem('dkvaUsers') || '{}');
+
+                if (users[username]) {
+                    showMessage('ПОЛЬЗОВАТЕЛЬ УЖЕ СУЩЕСТВУЕТ', 'error');
+                    return;
+                }
+
+                // Сохраняем нового пользователя
+                users[username] = { password };
+                localStorage.setItem('dkvaUsers', JSON.stringify(users));
+
+                showMessage('РЕГИСТРАЦИЯ УСПЕШНА! ТЕПЕРЬ ВОЙДИТЕ.', 'success');
+                registerForm.reset();
+                showLogin.click();
+            };
+
+            // Вход
+            loginForm.onsubmit = (e) => {
+                e.preventDefault();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value;
+
+                if (!username || !password) {
+                    showMessage('ВВЕДИТЕ ЛОГИН И ПАРОЛЬ', 'error');
+                    return;
+                }
+
+                const users = JSON.parse(localStorage.getItem('dkvaUsers') || '{}');
+
+                if (!users[username]) {
+                    showMessage('ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН', 'error');
+                    return;
+                }
+
+                if (users[username].password !== password) {
+                    showMessage('НЕВЕРНЫЙ ПАРОЛЬ', 'error');
+                    return;
+                }
+
+                // Успешный вход
+                localStorage.setItem('dkvaCurrentUser', username);
+                showMessage(`ДОБРО ПОЖАЛОВАТЬ, ${username.toUpperCase()}!`, 'success');
+                loginForm.reset();
+
+                // Через 2 секунды переходим на главную
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            };
+
+            function showMessage(text, type) {
+                authMessage.textContent = text;
+                authMessage.className = `auth-message ${type}`;
+                setTimeout(() => {
+                    authMessage.textContent = '';
+                    authMessage.className = 'auth-message';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

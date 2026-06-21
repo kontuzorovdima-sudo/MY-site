@@ -1573,3 +1573,135 @@ nav { display: flex; justify-content: space-between; }
         height: 35vmin !important;
     }
 }
+
+/* ============================================ */
+/*            АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ         */
+/* ============================================ */
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 20px 0;
+}
+
+.auth-box {
+    background: rgba(5, 5, 5, 0.8);
+    border: 2px solid var(--blood);
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 30px rgba(139, 0, 0, 0.3);
+}
+
+.auth-title {
+    font-size: clamp(12px, 3vmin, 16px);
+    color: var(--blood);
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-form.hidden {
+    display: none;
+}
+
+.auth-btn {
+    background: transparent;
+    border: 1px solid var(--blood);
+    color: var(--blood);
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(10px, 2.5vmin, 12px);
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    min-height: 50px;
+}
+
+.auth-btn:hover {
+    background: var(--blood);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+}
+
+.auth-switch {
+    text-align: center;
+    font-size: clamp(8px, 2vmin, 10px);
+    color: #888;
+    margin-top: 20px;
+}
+
+.auth-switch a {
+    color: var(--blood);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.auth-switch a:hover {
+    text-shadow: 0 0 10px var(--blood);
+}
+
+.auth-message {
+    text-align: center;
+    font-size: clamp(9px, 2.2vmin, 11px);
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid transparent;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-message.success {
+    color: #00ff00;
+    border-color: #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.auth-message.error {
+    color: var(--blood);
+    border-color: var(--blood);
+    background: rgba(139, 0, 0, 0.1);
+}
+
+/* Адаптация для авторизации на мобильных */
+@media (max-width: 768px) {
+    .auth-box {
+        padding: 4vmin !important;
+        width: 95% !important;
+    }
+
+    .auth-title {
+        font-size: clamp(10px, 3vmin, 14px) !important;
+        margin-bottom: 4vmin !important;
+    }
+
+    .auth-form {
+        gap: 3vmin !important;
+    }
+
+    .auth-btn {
+        font-size: clamp(9px, 2.8vmin, 12px) !important;
+        padding: 3vmin 4vmin !important;
+        min-height: 50px !important;
+    }
+
+    .auth-switch {
+        font-size: clamp(7px, 2vmin, 9px) !important;
+        margin-top: 3vmin !important;
+    }
+
+    .auth-message {
+        font-size: clamp(8px, 2.2vmin, 10px) !important;
+        padding: 2vmin !important;
+        margin-top: 3vmin !important;
+    }
+}
