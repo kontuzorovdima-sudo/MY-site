@@ -188,8 +188,8 @@ nav { display: flex; justify-content: space-between; }
     display: block;
     font-size: 10px;
     color: #777;
-    letter-spacing: 5px;
-    margin-bottom: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
 }
 
 .item-desc {
