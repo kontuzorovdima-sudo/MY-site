@@ -186,10 +186,10 @@ nav { display: flex; justify-content: space-between; }
 
 .item-title {
     display: block;
-    font-size: 50px;
+    font-size: 10px;
     color: #777;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
+    letter-spacing: 5px;
+    margin-bottom: 10px;
 }
 
 .item-desc {
